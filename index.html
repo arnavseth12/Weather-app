@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<!--
+  ================================================================
+  WEATHER APP — index.html
+  ================================================================
+  This is the main HTML shell. It contains only structure — no
+  styles (those live in style.css) and no logic (that's in app.js).
+
+  FILE STRUCTURE:
+    index.html  ← you are here (structure)
+    style.css   ← all visual styling
+    app.js      ← all data fetching, charts, localStorage, logic
+
+  TO GET STARTED:
+    1. Open app.js and paste your OpenWeatherMap API key where
+       indicated near the top of the file.
+    2. Open index.html in a browser (or run a local server).
+    3. Search for a city or click "Use my location".
+  ================================================================
+-->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather</title>
+
+  <!--
+    GOOGLE FONTS
+    ─────────────────────────────────────────────────────────────
+    "Outfit"  → headings, UI labels (clean geometric sans-serif)
+    "DM Mono" → numbers and data (monospaced, feels technical)
+
+    To change fonts:
+      1. Visit fonts.google.com and pick a font you like
+      2. Copy the <link> tag Google gives you and replace this one
+      3. In style.css, update --font-body and --font-mono in :root
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!--
+    CHART.JS — used to draw the temperature and humidity charts
+    ─────────────────────────────────────────────────────────────
+    Loaded from a CDN so you don't need to download anything.
+    Version 4.x is required. If you want to use your own copy,
+    download it from https://www.chartjs.org/ and change this src.
+  -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+  <!-- External stylesheet — all CSS lives in style.css -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- ============================================================
+    THEME TOGGLE BUTTON
+    Fixed in the top-right corner. Clicking it switches between
+    light and dark mode and saves the preference to localStorage.
+    The actual toggle logic is in app.js → initTheme() / toggleTheme()
+  ============================================================ -->
+  <button class="theme-toggle" id="themeToggle" title="Toggle dark / light mode">
+    <!-- Icon text is swapped by JS: ☀ for light mode, ◑ for dark -->
+    <span id="themeIcon">◑</span>
+  </button>
+
+  <!-- ============================================================
+    MAIN PAGE WRAPPER
+    Everything visible lives inside .page. The flex layout keeps
+    the content centered and adds breathing room at the top/bottom.
+  ============================================================ -->
+  <div class="page">
+
+    <!-- ============================================================
+      SIDEBAR / LEFT COLUMN
+      On wide screens this is a fixed left panel.
+      On mobile it collapses to the top of the page.
+    ============================================================ -->
+    <aside class="sidebar">
+
+      <!-- App wordmark / title -->
+      <div class="app-brand">
+        <span class="brand-dot"></span>
+        <span class="brand-name">WEATHER</span>
+      </div>
+
+      <!-- ──────────────────────────────────────────────────────
+        SEARCH SECTION
+        Type a city name and press Enter or click Search.
+        "Use my location" triggers the Geolocation API.
+      ────────────────────────────────────────────────────── -->
+      <div class="search-section">
+
+        <div class="search-row">
+          <!--
+            City input — typing here and pressing Enter triggers a search.
+            autocomplete="off" prevents browser autocomplete dropdown
+            from overlapping our UI.
+          -->
+          <input
+            type="text"
+            id="cityInput"
+            class="search-input"
+            placeholder="Search city…"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <!-- Search button — calls fetchByCity() in app.js -->
+          <button class="btn btn-search" id="searchBtn">Search</button>
+        </div>
+
+        <!-- Location button — calls useMyLocation() in app.js -->
+        <button class="btn btn-location" id="locBtn">
+          <span class="btn-icon">⊕</span> Use my location
+        </button>
+
+      </div><!-- end .search-section -->
+
+      <!-- ──────────────────────────────────────────────────────
+        RECENT SEARCHES
+        Populated by JS from localStorage. Shows up to 5 recent cities.
+        Clicking a recent city re-fetches weather for it.
+        The list is managed in app.js → saveRecentCity() / renderRecentCities()
+      ────────────────────────────────────────────────────── -->
+      <div class="recent-section" id="recentSection" style="display:none;">
+        <div class="recent-label">Recent</div>
+        <div class="recent-list" id="recentList"></div>
+      </div>
+
+      <!-- ──────────────────────────────────────────────────────
+        UNIT PREFERENCE
+        Switches between Celsius and Fahrenheit.
+        Preference is saved to localStorage automatically.
+      ────────────────────────────────────────────────────── -->
+      <div class="unit-section">
+        <div class="unit-label">Units</div>
+        <div class="unit-toggle">
+          <button class="unit-btn active" id="btnC" data-unit="metric">°C</button>
+          <button class="unit-btn"        id="btnF" data-unit="imperial">°F</button>
+        </div>
+      </div>
+
+    </aside><!-- end .sidebar -->
+
+    <!-- ============================================================
+      MAIN CONTENT AREA
+      All weather cards are rendered here by app.js → render().
+      The #content div is cleared and rewritten on every data load.
+    ============================================================ -->
+    <main class="main-content" id="mainContent">
+
+      <!--
+        INITIAL / IDLE STATE
+        Shown when the app first loads (before any search).
+        JS replaces this innerHTML once data is fetched.
+      -->
+      <div id="content">
+        <div class="state-card">
+          <div class="state-icon">○</div>
+          <div class="state-text">Search for a city or use your location to see the weather.</div>
+        </div>
+      </div>
+
+    </main><!-- end .main-content -->
+
+  </div><!-- end .page -->
+
+  <!--
+    EXTERNAL JAVASCRIPT
+    ─────────────────────────────────────────────────────────────
+    defer means the script runs after the HTML is fully parsed,
+    so it can safely access all DOM elements without needing
+    DOMContentLoaded wrappers everywhere.
+
+    ALL app logic lives in app.js — this file has zero inline JS.
+  -->
+  <script src="app.js" defer></script>
+
+</body>
+</html>
