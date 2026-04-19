@@ -1,73 +1,28 @@
-/*
-  ================================================================
-  WEATHER APP — style.css
-  ================================================================
-  All visual styling lives here. The JS file (app.js) never writes
-  inline styles — it only adds/removes CSS classes.
 
-  TABLE OF CONTENTS
-  ─────────────────────────────────────────────────────────────
-  1.  CSS Variables (design tokens — edit these to retheme)
-  2.  Dark mode overrides
-  3.  Reset & base
-  4.  Page layout (sidebar + main grid)
-  5.  Theme toggle button
-  6.  App brand / wordmark
-  7.  Search section
-  8.  Recent searches
-  9.  Unit toggle
-  10. Cards (shared base)
-  11. Current weather card
-  12. Stats grid
-  13. Sun row (sunrise/sunset)
-  14. AQI badge
-  15. Section labels
-  16. Hourly forecast strip
-  17. 5-day forecast rows
-  18. Chart cards
-  19. State boxes (loading / error / idle)
-  20. Animations & transitions
-  21. Responsive breakpoints
-  ================================================================
-*/
+  
 
 
-/* ================================================================
-  1. CSS VARIABLES — DESIGN TOKENS
-  ================================================================
-  Edit these to retheme the entire app.
-  Variables prefixed with --c- are colours.
-  Variables prefixed with --f- are font settings.
-  Variables prefixed with --r- are radii / spacing.
-
-  HOW THEMING WORKS:
-    • :root defines the LIGHT theme defaults.
-    • [data-theme="dark"] overrides them for dark mode.
-    • JS toggles the data-theme attribute on <html>.
-    • Every colour in the app reads from these variables,
-      so changing one variable updates every element at once.
-================================================================ */
 :root {
 
   /* ── Background colours ── */
-  --c-bg:          #f0eff9;       /* page background (soft lavender-grey)         */
-  --c-surface:     #ffffff;       /* card / panel background                       */
-  --c-surface-alt: #f7f6fd;       /* slightly tinted surface (stat cells, etc.)    */
-  --c-sidebar-bg:  #1a1730;       /* sidebar background (deep navy-purple)         */
+  --c-bg:          #dad7cd;       /* page background (soft lavender-grey)         */
+  --c-surface:     #dad7cd;       /* card / panel background                       */
+  --c-surface-alt: #dad7cd;       /* slightly tinted surface (stat cells, etc.)    */
+  --c-sidebar-bg:  #a3b18a;       /* sidebar background (deep navy-purple)         */
 
   /* ── Text colours ── */
-  --c-text:        #16141f;       /* primary text — near-black                     */
-  --c-muted:       #8884a0;       /* secondary / label text                        */
-  --c-on-dark:     #e8e5f5;       /* text on the dark sidebar                      */
-  --c-on-dark-dim: #6b6785;       /* muted text on the dark sidebar                */
+  --c-text:        #344e41;       /* primary text — near-black                     */
+  --c-muted:       #588157;       /* secondary / label text                        */
+  --c-on-dark:     #588157;       /* text on the dark sidebar                      */
+  --c-on-dark-dim: #588157;       /* muted text on the dark sidebar                */
 
   /* ── Accent colours ──
      The accent is used for: focus rings, active states, chart lines,
      the visibility bar, and hover highlights.
      Change this one value to shift the whole app's accent colour. */
-  --c-accent:      #7c6af7;       /* violet-purple                                 */
-  --c-accent-light:#ede9fe;       /* tint of accent for backgrounds                */
-  --c-accent-glow: rgba(124, 106, 247, 0.18); /* glow / shadow using accent colour  */
+  --c-accent:      #3a5a40;       /* violet-purple                                 */
+  --c-accent-light:#dad7cd;       /* tint of accent for backgrounds                */
+  --c-accent-glow: rgba(234, 240, 225, 0.18); /* glow / shadow using accent colour  */
 
   /* ── Border & divider ── */
   --c-border:      rgba(22, 20, 31, 0.08);   /* light-mode border                  */
@@ -89,10 +44,10 @@
 
   /* ── Radii ──
      Increase these for a rounder look, decrease for sharper. */
-  --r-sm:   8px;
-  --r-md:   14px;
-  --r-lg:   20px;
-  --r-xl:   28px;
+  --r-sm:   4px;
+  --r-md:   7px;
+  --r-lg:   10px;
+  --r-xl:   10px;
 
   /* ── Transitions ── */
   --t-fast:   0.15s ease;
@@ -105,13 +60,6 @@
 }
 
 
-/* ================================================================
-  2. DARK MODE OVERRIDES
-  ================================================================
-  These override only the colours that change in dark mode.
-  The data-theme attribute is toggled by JS on the <html> element.
-  User's preference is saved to localStorage by app.js.
-================================================================ */
 [data-theme="dark"] {
   --c-bg:          #0e0d18;
   --c-surface:     #161424;
@@ -175,15 +123,6 @@ input {
 img { max-width: 100%; }
 
 
-/* ================================================================
-  4. PAGE LAYOUT — sidebar + main content grid
-  ================================================================
-  The .page uses CSS Grid to create a two-column layout:
-    Left:  fixed sidebar (search, recent cities, preferences)
-    Right: main content area (weather cards)
-
-  On mobile (< 768px) it collapses to a single column.
-================================================================ */
 .page {
   display: grid;
   /* Sidebar is fixed at 260px; main content takes the rest */
@@ -223,12 +162,6 @@ img { max-width: 100%; }
 }
 
 
-/* ================================================================
-  5. THEME TOGGLE BUTTON
-  ================================================================
-  Fixed button in the top-right corner of the page.
-  Clicking it calls toggleTheme() in app.js.
-================================================================ */
 .theme-toggle {
   position: fixed;
   top: 20px;
@@ -258,13 +191,6 @@ img { max-width: 100%; }
 }
 
 
-/* ================================================================
-  6. APP BRAND / WORDMARK
-  ================================================================
-  The small logo area at the top of the sidebar.
-  The coloured dot is a decorative element — change --c-accent
-  to change its colour along with the rest of the accent colours.
-================================================================ */
 .app-brand {
   display: flex;
   align-items: center;
@@ -290,9 +216,6 @@ img { max-width: 100%; }
 }
 
 
-/* ================================================================
-  7. SEARCH SECTION
-================================================================ */
 .search-section {
   display: flex;
   flex-direction: column;
@@ -371,12 +294,6 @@ img { max-width: 100%; }
 }
 
 
-/* ================================================================
-  8. RECENT SEARCHES
-  ================================================================
-  A list of recently searched cities shown below the search bar.
-  Populated and managed by app.js → renderRecentCities().
-================================================================ */
 .recent-section {
   display: flex;
   flex-direction: column;
@@ -423,12 +340,6 @@ img { max-width: 100%; }
 .recent-chip:hover::after { opacity: 1; }
 
 
-/* ================================================================
-  9. UNIT TOGGLE (°C / °F)
-  ================================================================
-  A small pill-style toggle for switching temperature units.
-  The active state and localStorage save are handled by app.js.
-================================================================ */
 .unit-section {
   display: flex;
   flex-direction: column;
@@ -476,12 +387,6 @@ img { max-width: 100%; }
 }
 
 
-/* ================================================================
-  10. CARDS — shared base styles
-  ================================================================
-  Every weather panel is a .card. They share the same background,
-  border, radius, and overflow behaviour.
-================================================================ */
 .card {
   background: var(--c-surface);
   border: 1px solid var(--c-border);
@@ -492,12 +397,6 @@ img { max-width: 100%; }
 }
 
 
-/* ================================================================
-  11. CURRENT WEATHER CARD
-  ================================================================
-  The main hero card with the big temperature, city name,
-  weather emoji, and high/low strip.
-================================================================ */
 
 /* Padded inner section (city name + big temp) */
 .current-body {
@@ -571,12 +470,6 @@ img { max-width: 100%; }
 .high-low .high { color: var(--c-text); }
 
 
-/* ================================================================
-  12. STATS GRID
-  ================================================================
-  A 2-column grid of data cells below the main temp display.
-  Each cell shows a label + value (and sometimes a sub-note).
-================================================================ */
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -650,9 +543,6 @@ img { max-width: 100%; }
 }
 
 
-/* ================================================================
-  13. SUN ROW — sunrise & sunset
-================================================================ */
 .sun-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -682,13 +572,6 @@ img { max-width: 100%; }
 }
 
 
-/* ================================================================
-  14. AQI BADGE
-  ================================================================
-  Air Quality Index pill shown inline with the city name.
-  Background and text colour are set inline by JS based on the
-  AQI numeric value (1=Good … 5=Very Poor).
-================================================================ */
 .aqi-pill {
   display: inline-block;
   font-size: 11px;
@@ -703,11 +586,6 @@ img { max-width: 100%; }
 }
 
 
-/* ================================================================
-  15. SECTION LABELS
-  ================================================================
-  Small uppercase label at the top of each forecast card.
-================================================================ */
 .section-label {
   font-size: 10px;
   letter-spacing: 0.15em;
@@ -718,12 +596,6 @@ img { max-width: 100%; }
 }
 
 
-/* ================================================================
-  16. HOURLY FORECAST STRIP
-  ================================================================
-  A horizontally scrollable row of 3-hour blocks.
-  Each block shows: time, emoji, temp, rain %.
-================================================================ */
 
 /* Outer scroll container — hides scrollbar visually */
 .hourly-strip {
@@ -776,9 +648,6 @@ img { max-width: 100%; }
 }
 
 
-/* ================================================================
-  17. 5-DAY FORECAST ROWS
-================================================================ */
 
 /* Each day is a horizontal flex row */
 .day-row {
@@ -830,15 +699,6 @@ img { max-width: 100%; }
 .day-low  { color: var(--c-muted); font-size: 12px; }
 
 
-/* ================================================================
-  18. CHART CARDS
-  ================================================================
-  The temperature line chart and the precipitation bar chart each
-  live inside a .chart-card.
-
-  The <canvas> element is created and managed by Chart.js in app.js.
-  We just give it a fixed height here so the layout doesn't jump.
-================================================================ */
 .chart-card {
   padding: 22px;
 }
@@ -886,11 +746,6 @@ img { max-width: 100%; }
 }
 
 
-/* ================================================================
-  19. STATE BOXES — loading / error / idle
-  ================================================================
-  Shown before data is fetched, while loading, and on errors.
-================================================================ */
 .state-card {
   background: var(--c-surface);
   border: 1px solid var(--c-border);
@@ -926,13 +781,6 @@ img { max-width: 100%; }
 }
 
 
-/* ================================================================
-  20. ANIMATIONS & TRANSITIONS
-  ================================================================
-  Cards animate in from below when weather data loads.
-  Uses CSS animation with staggered delays for a cascade effect.
-  If you find this distracting, delete this entire section.
-================================================================ */
 @keyframes fadeSlideUp {
   from {
     opacity: 0;
@@ -958,12 +806,6 @@ img { max-width: 100%; }
 .animate-in:nth-child(6) { animation-delay: 0.35s; }
 
 
-/* ================================================================
-  21. RESPONSIVE BREAKPOINTS
-  ================================================================
-  The app switches from a two-column layout (sidebar + main)
-  to a single stacked column on screens narrower than 768px.
-================================================================ */
 
 /* Tablet and below */
 @media (max-width: 900px) {

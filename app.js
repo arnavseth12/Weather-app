@@ -1,93 +1,13 @@
-/*
-  ================================================================
-  WEATHER APP — app.js
-  ================================================================
-  All JavaScript logic lives here. This file handles:
-    • API calls to OpenWeatherMap
-    • Rendering the weather UI
-    • Drawing charts with Chart.js
-    • Saving/loading user preferences via localStorage
-    • Theme toggle (dark / light mode)
-    • Recent city history
-
-  TABLE OF CONTENTS
-  ─────────────────────────────────────────────────────────────
-  1.  API KEY — ★ PUT YOUR KEY HERE ★
-  2.  API endpoint constants
-  3.  App state object
-  4.  localStorage helpers (save/load preferences)
-  5.  Theme management (dark/light)
-  6.  Unit toggle
-  7.  Recent cities management
-  8.  Utility / formatter functions
-  9.  Geolocation (use my location)
-  10. API fetching functions
-  11. Chart rendering (temperature + precipitation)
-  12. Main render function (builds all weather cards)
-  13. State display helpers (loading, error, idle)
-  14. Event listeners (search, location, unit, theme)
-  15. App initialisation (runs on page load)
-  ================================================================
-*/
 
 
-/* ================================================================
-  1. API KEY ★
-  ================================================================
-
-  ★★★  PASTE YOUR OPENWEATHERMAP API KEY BELOW  ★★★
-
-  How to get a free API key:
-    1. Go to https://openweathermap.org/api
-    2. Click "Sign Up" — no credit card needed
-    3. After signing up, go to your profile → "My API Keys"
-    4. Copy the default key (or generate a new one)
-    5. Paste it below, replacing "YOUR_API_KEY_HERE"
-
-  IMPORTANT: New keys can take up to 10 minutes to activate.
-  If you get a 401 error, wait a few minutes and try again.
-
-  Free tier limits (as of 2024):
-    • 1,000 API calls per day
-    • 60 calls per minute
-    • Includes: current weather, 5-day forecast, air pollution,
-                geocoding (city name → coordinates)
-================================================================ */
 const API_KEY = "76fa029bd344cb7c3e0850a3a5508966";   /* ← ★ paste your key here ★ */
 
 
-/* ================================================================
-  2. API ENDPOINT CONSTANTS
-  ================================================================
-  These point to the OpenWeatherMap v2.5 API.
-  You shouldn't need to change these unless OWM updates their API.
-================================================================ */
 const OWM_BASE  = "https://api.openweathermap.org/data/2.5";
 const OWM_GEO   = "https://api.openweathermap.org/geo/1.0";
 
-/*
-  OWM Endpoints used:
-    ${OWM_GEO}/direct        → City name → lat/lon (geocoding)
-    ${OWM_BASE}/weather      → Current conditions
-    ${OWM_BASE}/forecast     → 5-day / 3-hour forecast
-    ${OWM_BASE}/air_pollution → Air quality index
-*/
 
 
-/* ================================================================
-  3. APP STATE
-  ================================================================
-  A single object that holds everything the UI depends on.
-  This makes it easy to re-render after changing a preference
-  (like the unit) without re-fetching from the API.
-
-  state.unit     : "metric" = °C, m/s  |  "imperial" = °F, mph
-  state.current  : OWM /weather response object (or null)
-  state.forecast : OWM /forecast response object (or null)
-  state.airQuality: OWM /air_pollution response object (or null)
-  state.theme    : "light" | "dark"
-  state.charts   : Chart.js instances (kept so we can destroy/redraw)
-================================================================ */
 const state = {
   unit:        "metric",      /* temperature unit preference */
   current:     null,          /* current weather data */
@@ -101,21 +21,6 @@ const state = {
 };
 
 
-/* ================================================================
-  4. LOCALSTORAGE HELPERS
-  ================================================================
-  These functions read and write user preferences to localStorage.
-  localStorage persists across browser sessions (unlike sessionStorage).
-
-  KEYS STORED:
-    "weather_unit"   : "metric" or "imperial"
-    "weather_theme"  : "light" or "dark"
-    "weather_recent" : JSON array of up to 5 city name strings
-    "weather_last"   : JSON string of last fetched coords { lat, lon, name }
-
-  NOTE: localStorage only stores strings, so objects/arrays must
-  be serialised with JSON.stringify() and parsed with JSON.parse().
-================================================================ */
 
 /**
  * Save a single preference value to localStorage.
@@ -163,13 +68,6 @@ function loadAllPrefs() {
 }
 
 
-/* ================================================================
-  5. THEME MANAGEMENT — dark / light mode
-  ================================================================
-  The theme is controlled by a data-theme attribute on <html>.
-  CSS uses [data-theme="dark"] selectors to apply dark colours.
-  See style.css section 2 for the colour overrides.
-================================================================ */
 
 /**
  * Apply a theme to the page.
@@ -205,9 +103,7 @@ function toggleTheme() {
 }
 
 
-/* ================================================================
-  6. UNIT TOGGLE — °C / °F
-================================================================ */
+
 
 /**
  * Apply a unit preference to the UI toggle buttons.
@@ -235,12 +131,6 @@ function setUnit(unit) {
 }
 
 
-/* ================================================================
-  7. RECENT CITIES MANAGEMENT
-  ================================================================
-  Stores up to MAX_RECENT recently searched city names in localStorage.
-  Clicking a recent city re-runs fetchByCity() for that city.
-================================================================ */
 
 const MAX_RECENT = 5;   /* maximum number of recent cities to show */
 
@@ -296,12 +186,6 @@ function renderRecentCities(recent) {
 }
 
 
-/* ================================================================
-  8. UTILITY & FORMATTER FUNCTIONS
-  ================================================================
-  Pure functions — they take a value and return a formatted string.
-  No side effects, easy to test and customise.
-================================================================ */
 
 /**
  * Format a temperature (given in Celsius) as a string.
